@@ -74,7 +74,7 @@ O **controlador do carro** é responsável por mover o carro para a esquerda ou 
   - `car_h_pos`: coordenada horizontal do caro (extremidade superior esquerda)
   - `car_v_pos`: coordenada vertical do carro
 
-### 6. **Módulo `obstacle_generator` (Gerador de Obstáculos)**
+### 6. **Módulo `obstacles` (Gerador de Obstáculos)**
 
 O módulo de **geração de obstáculos** é responsável por criar os obstáculos que descem pela tela. Os obstáculos têm posições e velocidades definidas, e o módulo garante que eles se movam de cima para baixo na tela de forma constante. Quando um obstáculo atinge a parte inferior da tela, ele é reposicionado no topo.
 
@@ -87,7 +87,7 @@ O módulo de **geração de obstáculos** é responsável por criar os obstácul
   - `obs2_h_pos`
   - `obs2_v_pos`
 
-### 7. **Módulo `collision` (Detecção de Colisão)**
+### 7. **Módulo `collision_detection` (Detecção de Colisão)**
 
 O **módulo de detecção de colisão** verifica se o carro colidiu com algum obstáculo. Ele faz isso comparando as posições do carro e dos obstáculos. Se eles se sobrepuserem, significa que houve uma colisão, e o jogo deve ser interrompido.
 
