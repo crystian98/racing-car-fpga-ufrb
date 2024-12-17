@@ -12,8 +12,9 @@ module vga_controller(
 );
 
     // Declarações internas
-    wire [23:0] bgr_data;       // Dados RGB atuais (wire, não reg)
-    wire [23:0] mem_pixel_data; // Dados RGB provenientes da memória RAM
+    wire [8:0] bgr_data;       // Dados RGB atuais (wire, não reg)
+    wire [8:0] pixel_9bit; // Dados RGB provenientes da memória RAM
+    wire [23:0] pixel_24bit;
     wire [9:0] car_h_pos;       // Posição horizontal do carro
     wire [8:0] car_v_pos;       // Posição vertical do carro
     wire [9:0] pixel_x;         // Coordenadas atuais do pixel
@@ -33,15 +34,16 @@ module vga_controller(
     wire [18:0] endereco_memoria;
 
     // Instância do módulo de sincronização VGA
-    vga_sync vs (
-        .reset(~iRST_n),
+   	 
+    video_sync_generator vs(
+	     .reset(~iRST_n),
         .vga_clk(iVGA_CLK),
-        .blank_n(blank_n_wire),  // Conectado ao wire intermediário
-        .HS(hs_wire),            // Conectado ao wire intermediário
-        .VS(vs_wire),            // Conectado ao wire intermediário
-        .x(pixel_x),
-        .y(pixel_y)
-    );
+        .blank_n(blank_n_wire),
+        .HS(hs_wire),
+        .VS(vs_wire),
+	     .x(pixel_x),
+	     .y(pixel_y)
+	);
 
     // Lógica sequencial para atualizar os sinais reg com base nos wires intermediários
     always @(posedge iVGA_CLK or negedge iRST_n) begin
@@ -103,24 +105,29 @@ module vga_controller(
     );
 
     // Instância do módulo de conversão de coordenadas para endereço
-    coordenada_to_endereco addr_converter (
+    coordenada_x_endereco converter (
         .x(pixel_x),           // Coordenada horizontal
         .y(pixel_y),           // Coordenada vertical
         .endereco(endereco_memoria) // Endereço linear gerado
     );
 
     // Instância do módulo de memória RAM
-    memoria_ram ram_inst (
+    frame_buffer fb (
         .endereco(endereco_memoria), // Endereço baseado nas coordenadas do pixel
         .data_in(bgr_data),          // Dados de entrada gerados pelo drawer
         .we(1'b1),                   // Escreve na memória em todos os ciclos
         .clk(iVGA_CLK),
-        .data_out(mem_pixel_data)    // Dados RGB lidos da memória
+        .data_out(pixel_9bit)    // Dados RGB lidos da memória
     );
 
+    color_converter color_converter_inst (
+        .pixel_9bit(pixel_9bit),    // Dados de 9 bits RGB
+        .pixel_24bit(pixel_24bit)   // Dados de 24 bits RGB convertidos
+    );
+	 
     // Atribui os dados RGB da memória ao barramento de saída
-    assign b_data = mem_pixel_data[23:16];
-    assign g_data = mem_pixel_data[15:8];
-    assign r_data = mem_pixel_data[7:0];
+    assign b_data = pixel_24bit[23:16];
+    assign g_data = pixel_24bit[15:8];
+    assign r_data = pixel_24bit[7:0];
 
 endmodule
