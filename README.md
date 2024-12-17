@@ -2,7 +2,7 @@
 
 ## Visão Geral do Projeto
 
-Este projeto implementa um **jogo de corrida simples** utilizando um FPGA, com o objetivo de simular um jogo de corrida em um display VGA. O jogo apresenta um **carro controlado pelo jogador** e **obstáculos** que aparecem na tela, enquanto o jogador precisa desviar desses obstáculos. O sistema foi projetado para ser simples, mas eficiente, utilizando os módulos básicos de controle VGA, sincronização de vídeo, controle de movimento do carro, geração de obstáculos e detecção de colisões. O fluxo de dados no projeto é cuidadosamente projetado para garantir que o jogo funcione de forma fluida.
+Este projeto implementa um **jogo de corrida** utilizando FPGA, com o objetivo de simular um jogo de corrida em um display VGA. O jogo apresenta um **carro controlado pelo jogador** e **obstáculos** que aparecem na tela, enquanto o jogador precisa desviar desses obstáculos. O sistema foi projetado para ser simples, mas eficiente, utilizando os módulos básicos de controle VGA, sincronização de vídeo, controle de movimento do carro, geração de obstáculos e detecção de colisões. O fluxo de dados no projeto é cuidadosamente projetado para garantir que o jogo funcione de forma fluida.
 
 ### Objetivo do Jogo
 
@@ -108,17 +108,4 @@ O **módulo de detecção de colisão** verifica se o carro colidiu com algum ob
 
 ## Diagrama de Blocos
 
-Abaixo está o diagrama de blocos do sistema, que ilustra como os módulos interagem:
-
 ![Diagrama de Blocos](rtl_racing_car.jpg)
-
-> **Nota**: Insira aqui o diagrama de blocos do sistema, destacando a interação entre os módulos `video_sync_generator`, `coordenada_x_endereco`, `frame_buffer`, `drawer`, `car_controller`, `obstacle_generator` e `collision_detection`.
-
-## Conclusão
-
-Este projeto implementa um jogo de corrida simples em um FPGA utilizando a sincronização VGA. O jogo consiste em um carro que o jogador controla para desviar dos obstáculos que descem pela tela. O fluxo de dados e a hierarquia dos módulos garantem que todos os aspectos do jogo, desde a renderização até a detecção de colisões, funcionem de maneira eficiente. Este sistema pode ser facilmente expandido para incluir novos recursos, como pontuação, efeitos visuais e mais obstáculos.
-
----
-
-> **Observação**: O jogo pode ser ajustado para diferentes resoluções ou expandido com novos recursos, como animações de fundo, controle de velocidade e níveis mais desafiadores.
-
