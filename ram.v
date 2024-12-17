@@ -1,5 +1,5 @@
 // Módulo de memória RAM para armazenamento do frame buffer
-module memoria_ram (
+module frame_buffer (
     input [18:0] endereco,   // Endereço de leitura e escrita (assumindo 640x480 de pixels)
     input [8:0] data_in,     // Dados de entrada (cor do pixel em 9 bits: 3 para R, G e B)
     input we,                // Sinal de escrita
