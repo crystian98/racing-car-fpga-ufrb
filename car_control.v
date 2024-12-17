@@ -13,7 +13,9 @@ module carro (
     parameter PISTA_ESQUERDA = 120;   // Limite esquerdo da pista
     parameter PISTA_DIREITA = 520;   // Limite direito da pista
     parameter VEL_DESVIO = 5;        // Velocidade de movimento para os lados (pixels a cada comando)
-    parameter FRAME_COUNT_LIMIT = 16'd50000; // Frequência de movimento
+    
+    // Para garantir que o movimento seja a 30Hz
+    parameter FRAME_COUNT_LIMIT = 16'd83333;  // Aproximadamente 30Hz (25MHz / 30 = 83333)
 
     reg [15:0] frame_counter;        // Contador de quadros para controle de movimento
 
