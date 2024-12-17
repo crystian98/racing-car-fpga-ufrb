@@ -2,15 +2,15 @@
 
 ## Visão Geral do Projeto
 
-Este projeto implementa um **jogo de corrida** utilizando FPGA, com o objetivo de simular um jogo de corrida em um display VGA. O jogo apresenta um **carro controlado pelo jogador** e **obstáculos** que aparecem na tela, enquanto o jogador precisa desviar desses obstáculos. O sistema foi projetado para ser simples, mas eficiente, utilizando os módulos básicos de controle VGA, sincronização de vídeo, controle de movimento do carro, geração de obstáculos e detecção de colisões. O fluxo de dados no projeto é cuidadosamente projetado para garantir que o jogo funcione de forma fluida.
+Este projeto implementa um **jogo de corrida** utilizando FPGA, com o objetivo de simular um jogo de corrida em um display VGA. O jogo apresenta um **carro controlado pelo jogador** e **obstáculos** que aparecem na tela, enquanto o jogador precisa desviar desses obstáculos. 
 
 ### Objetivo do Jogo
 
-O objetivo do jogo é controlar um carro, movendo-o para a esquerda e para a direita na tela, com o intuito de desviar dos **obstáculos** que descem pela pista. O jogo é exibido em uma tela VGA, e o jogador controla o carro usando um joystick ou outros dispositivos de entrada. Se o carro colidir com um obstáculo, o jogo termina.
+O objetivo do jogo é controlar um carro, movendo-o para a esquerda e para a direita na tela, com o intuito de desviar dos **obstáculos** que descem pela pista. O jogo é exibido em uma tela LCD com interface VGA e o jogador controla o carro com os botões Key1 e Key0 da placa da Altera, mas um joystick ou outros dispositivos de entrada poderiam também ser usados. Se o carro colidir com um obstáculo, o jogo reinicia.
 
 ## Hierarquia dos Módulos
 
-O controlador VGA e todos os outros módulos são organizados de forma hierárquica e interconectados para criar o jogo de corrida. Abaixo estão os principais módulos do projeto e suas respectivas responsabilidades:
+O controlador VGA e todos os outros módulos são organizados de forma hierárquica e interconectados para criar o jogo de corrida. Abaixo estão os principais módulos do projeto e suas funções:
 
 ### 1. **Módulo `video_sync_generator` (Gerador de Sinal de Sincronização VGA)**
 
@@ -40,7 +40,7 @@ O módulo `coordenada_x_endereco` converte as coordenadas cartesianas `(x, y)` g
 
 ### 3. **Módulo `frame_buffer` (Memória de Vídeo)**
 
-O **frame buffer** armazena os dados gráficos do jogo. Cada pixel da tela possui uma cor associada, que é armazenada no frame buffer. O módulo de **controle de cor** determina as cores dos pixels e os armazena no frame buffer. O frame buffer é acessado pelo endereço linear gerado pelo módulo `coordenada_x_endereco`.
+O **frame buffer** armazena os dados gráficos do jogo. Cada pixel da tela possui uma cor associada, que é armazenada no frame buffer. O módulo de **drawer** determina as cores dos pixels e os armazena no frame buffer. O frame buffer é acessado pelo endereço linear gerado pelo módulo `coordenada_x_endereco`.
 
 - **Entrada**:
   - `endereco`: Endereço linear para acessar a posição do pixel no frame buffer.
@@ -49,7 +49,7 @@ O **frame buffer** armazena os dados gráficos do jogo. Cada pixel da tela possu
 - **Saída**:
   - Dados de cor para os pixels a serem exibidos.
 
-### 4. **Módulo `drawer` (Desenhador de Objetos na Tela)**
+### 4. **Módulo `drawer`**
 
 O módulo `drawer` é responsável por desenhar os objetos do jogo, como o **carro** e os **obstáculos**. Ele usa as coordenadas dos pixels `(x, y)` e as compara com as posições dos objetos. Dependendo da posição e das coordenadas, o módulo desenha o carro ou os obstáculos no frame buffer.
 
@@ -67,7 +67,7 @@ O módulo `drawer` é responsável por desenhar os objetos do jogo, como o **car
 O **controlador do carro** é responsável por mover o carro para a esquerda ou direita com base na entrada do jogador. Ele ajusta a posição do carro de acordo com os comandos de movimento e controla a velocidade de movimento.
 
 - **Entrada**:
-  - `joystick_input`: Entrada do joystick ou controle (movimentos esquerdo/direito).
+  - `Key1` e `Key0`: botões que movimentam o carro para esquerda ou direita.
   - `clk`: Clock do jogo.
 
 - **Saída**:
