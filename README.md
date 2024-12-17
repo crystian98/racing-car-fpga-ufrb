@@ -71,7 +71,8 @@ O **controlador do carro** é responsável por mover o carro para a esquerda ou 
   - `clk`: Clock do jogo.
 
 - **Saída**:
-  - `car_position`: Posição atual do carro na tela.
+  - `car_h_pos`: coordenada horizontal do caro (extremidade superior esquerda)
+  - `car_v_pos`: coordenada vertical do carro
 
 ### 6. **Módulo `obstacle_generator` (Gerador de Obstáculos)**
 
@@ -80,31 +81,37 @@ O módulo de **geração de obstáculos** é responsável por criar os obstácul
 - **Entrada**:
   - `clk`: Clock do jogo.
 
-- **Saída**:
-  - `obstacle_position`: Posição dos obstáculos na tela.
+- **Saídas**
+  - `obs1_h_pos`: coordenada horizontal do obstáculo 1
+  - `obs1_v_pos`: coordenada vertical do obstáculo 1
+  - `obs2_h_pos`
+  - `obs2_v_pos`
 
-### 7. **Módulo `collision_detection` (Detecção de Colisão)**
+### 7. **Módulo `collision` (Detecção de Colisão)**
 
 O **módulo de detecção de colisão** verifica se o carro colidiu com algum obstáculo. Ele faz isso comparando as posições do carro e dos obstáculos. Se eles se sobrepuserem, significa que houve uma colisão, e o jogo deve ser interrompido.
 
-- **Entrada**:
-  - `car_position`: Posição do carro.
-  - `obstacle_position`: Posições dos obstáculos.
+- **Entradas**:
+  - Pixels ocupados pelo carro e pelos obstáculos
 
 - **Saída**:
-  - `collision_detected`: Indica se houve uma colisão entre o carro e um obstáculo.
+  - `reset_game`: Um sinal assíncrono de reset é acionado reiniciando o jogo.
 
 ## Fluxo de Dados
 
-1. **Geração dos Sinais de Sincronização**: O módulo `video_sync_generator` gera os sinais de sincronização VGA (`HS`, `VS`) e as coordenadas cartesianas `x` e `y`, que determinam a posição dos pixels na tela.
+1. **Geração dos Sinais de Sincronização**: O módulo `video_sync_generator` gera, a partir do clock, os sinais de sincronização VGA (`HS`, `VS`) e as coordenadas cartesianas `x` e `y`, que determinam a posição dos pixels na tela.
 
-2. **Desenhando os Objetos**: O módulo `drawer` usa as coordenadas `(x, y)` para desenhar o carro e os obstáculos no frame buffer. Ele armazena as cores correspondentes aos objetos no `pixel_data`.
+2. **Controle do Carro**: Os sinais Key0 e Key1 são lidos pelo módulo `car_controller`. Esse módulo atualiza a posição do carro na tela.
 
-3. **Controle do Carro**: O jogador controla o carro através de um joystick, que é lido pelo módulo `car_controller`. Esse módulo atualiza a posição do carro na tela.
+3. **Geração e Movimento dos Obstáculos**: O módulo `obstacles` gera obstáculos e os move pela tela de cima para baixo. Quando um obstáculo atinge a parte inferior da tela, ele é reposicionado no topo, em loop.
 
-4. **Geração e Movimento dos Obstáculos**: O módulo `obstacle_generator` gera obstáculos e os move pela tela de cima para baixo. Quando um obstáculo atinge a parte inferior da tela, ele é reposicionado no topo.
+4. **Detecção de Colisão**: O módulo `collision_detection` verifica se o carro colidiu com algum obstáculo. Caso uma colisão seja detectada, o jogo termina.
 
-5. **Detecção de Colisão**: O módulo `collision_detection` verifica se o carro colidiu com algum obstáculo. Caso uma colisão seja detectada, o jogo termina.
+
+5. **Desenhando os Objetos**: O módulo `drawer` usa as coordenadas `(x, y)` para desenhar o carro e os obstáculos, além dos sinais de `car_controller` e `obstacles`. A saída `pixel_data` envia os dados das cores para o frame buffer.
+
+6. **Canais RGB**: O módulo `color_conv` converte a saída de 9 bits do frame buffer para o padrão de cores em 24 bits. Estes sinais em paralelo aos sinais de sincronização de vídeo são lidos pelo DAC presente na placa de prototipagem da FPGA.
+
 
 ## Diagrama de Blocos
 
