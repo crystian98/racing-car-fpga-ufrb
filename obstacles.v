@@ -14,7 +14,7 @@ module obstaculos(
     parameter ALTURA_TELA = 525;   // Altura da tela (em linhas)
     parameter LARGURA_TELA = 640;  // Largura da tela (em pixels)
     parameter OBS_LARGURA = 50;    // Largura dos obstáculos
-    parameter FRAME_CONT_LIMITE = 16'd40000; // Contador para redução de frequência
+    parameter FRAME_CONT_LIMITE = 16'd833; // Ajustado para 30 Hz (30 fps)
 
     reg [15:0] frame_cont;         // Contador de quadros para controlar a frequência do movimento
     reg [1:0] faixa_obs1, faixa_obs2; // Faixa onde os obstáculos são gerados (0, 1, 2)
