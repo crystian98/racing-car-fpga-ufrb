@@ -110,7 +110,7 @@ O **módulo de detecção de colisão** verifica se o carro colidiu com algum ob
 
 Abaixo está o diagrama de blocos do sistema, que ilustra como os módulos interagem:
 
-![Diagrama de Blocos](diagrama_de_blocos.png)
+![Diagrama de Blocos](rtl_racing_car.jpg)
 
 > **Nota**: Insira aqui o diagrama de blocos do sistema, destacando a interação entre os módulos `video_sync_generator`, `coordenada_x_endereco`, `frame_buffer`, `drawer`, `car_controller`, `obstacle_generator` e `collision_detection`.
 
