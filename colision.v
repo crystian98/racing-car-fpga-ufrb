@@ -1,11 +1,11 @@
 module collision_detection(
-    input [9:0] car_h_pos,        // Posição horizontal do carro
-    input [8:0] car_v_pos,        // Posição vertical do carro (corrigido para 9 bits)
-    input [9:0] obs1_h_pos,       // Posição horizontal do obstáculo 1
-    input [8:0] obs1_v_pos,       // Posição vertical do obstáculo 1 (corrigido para 9 bits)
-    input [9:0] obs2_h_pos,       // Posição horizontal do obstáculo 2
-    input [8:0] obs2_v_pos,       // Posição vertical do obstáculo 2 (corrigido para 9 bits)
-    output reg reset_game         // Sinal de reset do jogo
+    input [9:0] car_h_pos,        
+    input [8:0] car_v_pos, 
+    input [9:0] obs1_h_pos,
+    input [8:0] obs1_v_pos, 
+    input [9:0] obs2_h_pos,    
+    input [8:0] obs2_v_pos, 
+    output reg reset_game       
 );
 
     always @(*) begin
