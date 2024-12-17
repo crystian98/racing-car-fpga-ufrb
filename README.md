@@ -1,48 +1,124 @@
-# racing-car-fpga-ufrb
+# Projeto de Jogo de Corrida com Controlador VGA
 
-# Projeto do Controlador VGA para Jogo de Corrida
+## Visão Geral do Projeto
 
-## Visão Geral
+Este projeto implementa um **jogo de corrida simples** utilizando um FPGA, com o objetivo de simular um jogo de corrida em um display VGA. O jogo apresenta um **carro controlado pelo jogador** e **obstáculos** que aparecem na tela, enquanto o jogador precisa desviar desses obstáculos. O sistema foi projetado para ser simples, mas eficiente, utilizando os módulos básicos de controle VGA, sincronização de vídeo, controle de movimento do carro, geração de obstáculos e detecção de colisões. O fluxo de dados no projeto é cuidadosamente projetado para garantir que o jogo funcione de forma fluida.
 
-O projeto envolve a implementação de um controlador VGA para um jogo de corrida simples, utilizando um FPGA. O controlador VGA gerencia a sincronização de vídeo, geração das coordenadas dos pixels e a conversão dessas coordenadas para um endereço linear no frame buffer, permitindo que os gráficos sejam exibidos na tela. O fluxo de dados do sistema envolve a geração dos sinais de sincronização VGA, a criação das coordenadas cartesianas (x, y) dos pixels e a conversão dessas coordenadas em um endereço linear para acessar o frame buffer.
+### Objetivo do Jogo
 
-## Hierarquia do Controlador VGA
+O objetivo do jogo é controlar um carro, movendo-o para a esquerda e para a direita na tela, com o intuito de desviar dos **obstáculos** que descem pela pista. O jogo é exibido em uma tela VGA, e o jogador controla o carro usando um joystick ou outros dispositivos de entrada. Se o carro colidir com um obstáculo, o jogo termina.
 
-A arquitetura do controlador VGA é dividida em três módulos principais:
+## Hierarquia dos Módulos
 
-1. **Módulo `video_sync_generator`**: 
-   - **Função**: Este módulo gera os sinais de sincronização horizontal (HS) e vertical (VS), o sinal de blanking (`blank_n`), e as coordenadas dos pixels (`x` e `y`) com base nos temporizadores VGA.
-   - **Entradas**:
-     - `reset`: Sinal de reset para reiniciar os contadores.
-     - `vga_clk`: Clock do sistema VGA.
-   - **Saídas**:
-     - `HS`: Sinal de sincronização horizontal.
-     - `VS`: Sinal de sincronização vertical.
-     - `blank_n`: Sinal que habilita ou desabilita a renderização dos pixels.
-     - `x`: Coordenada horizontal do pixel (0 a 639).
-     - `y`: Coordenada vertical do pixel (0 a 479).
+O controlador VGA e todos os outros módulos são organizados de forma hierárquica e interconectados para criar o jogo de corrida. Abaixo estão os principais módulos do projeto e suas respectivas responsabilidades:
 
-2. **Módulo `coordenada_x_endereco`**:
-   - **Função**: Este módulo converte as coordenadas cartesianas (x, y) em um endereço linear para o frame buffer.
-   - **Entrada**:
-     - `x`: Coordenada horizontal do pixel.
-     - `y`: Coordenada vertical do pixel.
-   - **Saída**:
-     - `endereco`: Endereço linear do frame buffer, calculado por `endereco = y * 640 + x`, onde 640 é a largura da tela.
+### 1. **Módulo `video_sync_generator` (Gerador de Sinal de Sincronização VGA)**
+
+Este módulo é responsável por gerar os sinais necessários para controlar a sincronização da tela VGA, como **Horizontal Sync (HS)**, **Vertical Sync (VS)** e o sinal de **blanking (blank_n)**. Ele também gera as coordenadas dos pixels `x` e `y` (coordenadas cartesianas), que são usadas para determinar a posição dos objetos no display.
+
+- **Entradas**:
+  - `reset`: Sinal de reset para reiniciar o controle de sincronização.
+  - `vga_clk`: Clock da VGA, geralmente de 25,175 MHz para resoluções VGA padrão.
+  
+- **Saídas**:
+  - `HS`, `VS`: Sinais de sincronização horizontal e vertical.
+  - `blank_n`: Indica se o pixel está dentro da área visível da tela.
+  - `x`, `y`: Coordenadas dos pixels atuais.
+
+Este módulo controla a criação dos sinais de sincronização necessários para o display e mantém a contagem dos pixels na horizontal e vertical para a renderização dos gráficos.
+
+### 2. **Módulo `coordenada_x_endereco` (Conversor de Coordenadas para Endereço Linear)**
+
+O módulo `coordenada_x_endereco` converte as coordenadas cartesianas `(x, y)` geradas pelo `video_sync_generator` para um endereço linear no **frame buffer**. Esse endereço é utilizado para acessar os dados da memória onde os gráficos do jogo são armazenados.
+
+- **Entrada**:
+  - `x`: Coordenada horizontal.
+  - `y`: Coordenada vertical.
+
+- **Saída**:
+  - `endereco`: Endereço linear calculado como `endereco = y * 640 + x`, onde 640 é a largura da tela.
+
+### 3. **Módulo `frame_buffer` (Memória de Vídeo)**
+
+O **frame buffer** armazena os dados gráficos do jogo. Cada pixel da tela possui uma cor associada, que é armazenada no frame buffer. O módulo de **controle de cor** determina as cores dos pixels e os armazena no frame buffer. O frame buffer é acessado pelo endereço linear gerado pelo módulo `coordenada_x_endereco`.
+
+- **Entrada**:
+  - `endereco`: Endereço linear para acessar a posição do pixel no frame buffer.
+  - `pixel_data`: Dados de cor do pixel (geralmente 9 bits, com 3 bits para cada cor: R, G, B).
+
+- **Saída**:
+  - Dados de cor para os pixels a serem exibidos.
+
+### 4. **Módulo `drawer` (Desenhador de Objetos na Tela)**
+
+O módulo `drawer` é responsável por desenhar os objetos do jogo, como o **carro** e os **obstáculos**. Ele usa as coordenadas dos pixels `(x, y)` e as compara com as posições dos objetos. Dependendo da posição e das coordenadas, o módulo desenha o carro ou os obstáculos no frame buffer.
+
+- **Entrada**:
+  - `x`, `y`: Coordenadas dos pixels.
+  - `car_position`: Posição do carro na tela.
+  - `obstacles`: Posições dos obstáculos.
+  - `pixel_data`: Dados de cor.
+
+- **Saída**:
+  - Dados para desenhar o carro e os obstáculos no frame buffer.
+
+### 5. **Módulo `car_controller` (Controlador do Carro)**
+
+O **controlador do carro** é responsável por mover o carro para a esquerda ou direita com base na entrada do jogador. Ele ajusta a posição do carro de acordo com os comandos de movimento e controla a velocidade de movimento.
+
+- **Entrada**:
+  - `joystick_input`: Entrada do joystick ou controle (movimentos esquerdo/direito).
+  - `clk`: Clock do jogo.
+
+- **Saída**:
+  - `car_position`: Posição atual do carro na tela.
+
+### 6. **Módulo `obstacle_generator` (Gerador de Obstáculos)**
+
+O módulo de **geração de obstáculos** é responsável por criar os obstáculos que descem pela tela. Os obstáculos têm posições e velocidades definidas, e o módulo garante que eles se movam de cima para baixo na tela de forma constante. Quando um obstáculo atinge a parte inferior da tela, ele é reposicionado no topo.
+
+- **Entrada**:
+  - `clk`: Clock do jogo.
+
+- **Saída**:
+  - `obstacle_position`: Posição dos obstáculos na tela.
+
+### 7. **Módulo `collision_detection` (Detecção de Colisão)**
+
+O **módulo de detecção de colisão** verifica se o carro colidiu com algum obstáculo. Ele faz isso comparando as posições do carro e dos obstáculos. Se eles se sobrepuserem, significa que houve uma colisão, e o jogo deve ser interrompido.
+
+- **Entrada**:
+  - `car_position`: Posição do carro.
+  - `obstacle_position`: Posições dos obstáculos.
+
+- **Saída**:
+  - `collision_detected`: Indica se houve uma colisão entre o carro e um obstáculo.
 
 ## Fluxo de Dados
 
-### 1. Geração dos Sinais de Sincronização
+1. **Geração dos Sinais de Sincronização**: O módulo `video_sync_generator` gera os sinais de sincronização VGA (`HS`, `VS`) e as coordenadas cartesianas `x` e `y`, que determinam a posição dos pixels na tela.
 
-O controlador VGA começa com a geração dos sinais de sincronização. O `video_sync_generator` cria os sinais `HS` e `VS` que controlam a sincronização do monitor. Ele também gera o sinal `blank_n`, que determina se os pixels podem ser exibidos na tela. Os contadores horizontais (`h_cnt`) e verticais (`v_cnt`) são utilizados para determinar a posição atual na tela.
+2. **Desenhando os Objetos**: O módulo `drawer` usa as coordenadas `(x, y)` para desenhar o carro e os obstáculos no frame buffer. Ele armazena as cores correspondentes aos objetos no `pixel_data`.
 
-- **Horizontal**: A cada ciclo de clock, o contador horizontal (`h_cnt`) é incrementado até atingir o valor máximo (definido pela largura da tela e pela sincronia horizontal). Quando o contador horizontal atinge esse valor, o contador vertical (`v_cnt`) é incrementado.
-- **Vertical**: Da mesma forma, o contador vertical é incrementado até o valor máximo (definido pela altura da tela e pela sincronia vertical).
+3. **Controle do Carro**: O jogador controla o carro através de um joystick, que é lido pelo módulo `car_controller`. Esse módulo atualiza a posição do carro na tela.
 
-### 2. Cálculo das Coordenadas dos Pixels
+4. **Geração e Movimento dos Obstáculos**: O módulo `obstacle_generator` gera obstáculos e os move pela tela de cima para baixo. Quando um obstáculo atinge a parte inferior da tela, ele é reposicionado no topo.
 
-Quando o sinal `blank_n` é ativo (indicado pela combinação de sinais horizontais e verticais válidos), as coordenadas do pixel (`x` e `y`) são geradas com base nos contadores `h_cnt` e `v_cnt`. Essas coordenadas são então passadas para o módulo `coordenada_x_endereco`.
+5. **Detecção de Colisão**: O módulo `collision_detection` verifica se o carro colidiu com algum obstáculo. Caso uma colisão seja detectada, o jogo termina.
 
-### 3. Conversão para Endereço Linear
+## Diagrama de Blocos
 
-O módulo `coordenada_x_endereco` recebe as coordenadas cartesianas (`x`, `y`) e as converte em um endereço linear para o frame buffer. O endereço é calculado utilizando a fórmula:
+Abaixo está o diagrama de blocos do sistema, que ilustra como os módulos interagem:
+
+![Diagrama de Blocos](diagrama_de_blocos.png)
+
+> **Nota**: Insira aqui o diagrama de blocos do sistema, destacando a interação entre os módulos `video_sync_generator`, `coordenada_x_endereco`, `frame_buffer`, `drawer`, `car_controller`, `obstacle_generator` e `collision_detection`.
+
+## Conclusão
+
+Este projeto implementa um jogo de corrida simples em um FPGA utilizando a sincronização VGA. O jogo consiste em um carro que o jogador controla para desviar dos obstáculos que descem pela tela. O fluxo de dados e a hierarquia dos módulos garantem que todos os aspectos do jogo, desde a renderização até a detecção de colisões, funcionem de maneira eficiente. Este sistema pode ser facilmente expandido para incluir novos recursos, como pontuação, efeitos visuais e mais obstáculos.
+
+---
+
+> **Observação**: O jogo pode ser ajustado para diferentes resoluções ou expandido com novos recursos, como animações de fundo, controle de velocidade e níveis mais desafiadores.
+
