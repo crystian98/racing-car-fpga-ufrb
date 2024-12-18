@@ -2,8 +2,8 @@ import pygame
 import sys
 
 # Configurações da simulação
-WIDTH, HEIGHT = 1280, 960  # Aumentado para ocupar a tela toda
-CAR_WIDTH, CAR_HEIGHT = 100, 100  # Aumentado proporcionalmente
+WIDTH, HEIGHT = 1280, 960  # resolução da tela do notebook
+CAR_WIDTH, CAR_HEIGHT = 100, 100  # dimensões do carro
 CAR_SPEED = 4  # Velocidade de movimento horizontal do carro
 OBSTACLE_WIDTH, OBSTACLE_HEIGHT = 100, 100  # Obstáculos aumentados proporcionalmente
 OBSTACLE_SPEED = 10  # Velocidade de movimento dos obstáculos
@@ -11,7 +11,6 @@ PISTA_LARGURA = WIDTH - 480  # Largura da pista
 FAIXA_CENTRAL = 240 + (PISTA_LARGURA // 2 - CAR_WIDTH // 2)  # Posição inicial e central do carro
 FAIXAS = [240 + PISTA_LARGURA // 6, 240 + PISTA_LARGURA // 2, 240 + 5 * PISTA_LARGURA // 6]  # Posições fixas das 3 faixas
 
-# Inicializar pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Jogo de Carro")
