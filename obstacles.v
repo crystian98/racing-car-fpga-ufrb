@@ -17,7 +17,7 @@ module obstaculos(
     parameter FRAME_CONT_LIMITE = 26'd50_000_000; // Ajustado para 1 Hz
 
     // Contador de quadros
-    reg [26:0] frame_cont;
+    reg [25:0] frame_cont;
 
     // Estado do gerador pseudoaleatório (LCG)
     reg [31:0] random_state; 
