@@ -15,7 +15,7 @@ module carro (
     parameter VEL_DESVIO = 5;        // Velocidade de movimento para os lados (pixels a cada comando)
     
     // Para garantir que o movimento seja a 30Hz
-    parameter FRAME_COUNT_LIMIT = 16'd83333;  // Aproximadamente 30Hz (25MHz / 30 = 83333)
+    parameter FRAME_COUNT_LIMIT = 26'd50_000_000;  // Aproximadamente 30Hz (25MHz / 30 = 83333)
 
     reg [15:0] frame_counter;        // Contador de quadros para controle de movimento
 
@@ -36,13 +36,13 @@ module carro (
                 if (frame_counter < FRAME_COUNT_LIMIT) begin
                     frame_counter <= frame_counter + 1; // Continua o contador
                 end else begin
-                    frame_counter <= 16'd0; // Reseta o contador
+                    frame_counter <= 26'd0; // Reseta o contador
 
                     // Controle de movimento horizontal
-                    if (Key1 && car_h_pos < (PISTA_DIREITA - LARGURA_CARRO)) begin
+                    if (!Key1 && car_h_pos < (PISTA_DIREITA - LARGURA_CARRO)) begin
                         car_h_pos <= car_h_pos + VEL_DESVIO; // Mover para a direita
                     end 
-                    else if (Key0 && car_h_pos > PISTA_ESQUERDA) begin
+                    else if (!Key0 && car_h_pos > PISTA_ESQUERDA) begin
                         car_h_pos <= car_h_pos - VEL_DESVIO; // Mover para a esquerda
                     end
                 end
