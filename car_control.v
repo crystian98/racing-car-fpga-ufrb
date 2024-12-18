@@ -17,18 +17,18 @@ module carro (
     // Para garantir que o movimento seja a 30Hz
     parameter FRAME_COUNT_LIMIT = 26'd50_000_000;  // Aproximadamente 30Hz (25MHz / 30 = 83333)
 
-    reg [15:0] frame_counter;        // Contador de quadros para controle de movimento
+    reg [25:0] frame_counter;        // Contador de quadros para controle de movimento
 
     always @(posedge iVGA_CLK or negedge iRST_n) begin
         if (!iRST_n) begin
             // Reset assíncrono: Inicializa posições e contador
-            frame_counter <= 16'd0;
+            frame_counter <= 26'd0;
             car_h_pos <= 10'd295;  // Centralizado horizontalmente
             car_v_pos <= 9'd400;   // Inicial vertical (agora com 9 bits)
         end else begin
             // Reset síncrono baseado em reset_game
             if (reset_game) begin
-                frame_counter <= 16'd0;
+                frame_counter <= 26'd0;
                 car_h_pos <= 10'd295;  // Centralizado horizontalmente
                 car_v_pos <= 9'd400;   // Inicial vertical (agora com 9 bits)
             end else begin
