@@ -16,6 +16,9 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Jogo de Carro")
 pygame.mouse.set_visible(False)
+
+# Configuração do clock para simular o tempo de 50 MHz
+FPS = 60  # Vamos usar 60 FPS no Pygame para emular 50MHz de clock
 clock = pygame.time.Clock()
 
 # Estado do gerador pseudoaleatório (LCG)
@@ -75,44 +78,61 @@ def check_collision(carro_h_pos, obstaculos):
             return True  # Colidiu
     return False  # Não colidiu
 
+# Função para reiniciar o jogo
+def reset_game_state():
+    carro_h_pos = FAIXA_CENTRAL
+    obstaculos = [(FAIXAS[next_random() % 3], -OBSTACLE_HEIGHT), (FAIXAS[next_random() % 3], -OBSTACLE_HEIGHT * 4)]
+    return carro_h_pos, obstaculos
+
 # Inicializar posições
-carro_h_pos = FAIXA_CENTRAL
-obstaculos = [(FAIXAS[next_random() % 3], -OBSTACLE_HEIGHT), (FAIXAS[next_random() % 3], -OBSTACLE_HEIGHT * 4)]
+carro_h_pos, obstaculos = reset_game_state()
+
+# Divisores de tempo para simular o relógio de 50 MHz e ajustar para 60 Hz de movimento
+last_move_time = pygame.time.get_ticks()
+move_interval = 16  # Intervalo de 16 ms (aproximadamente 60 Hz)
 
 # Loop principal do jogo
 running = True
 while running:
+    current_time = pygame.time.get_ticks()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
 
-    # Controles do carro
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and carro_h_pos > 240:
-        carro_h_pos -= CAR_SPEED
-    if keys[pygame.K_RIGHT] and carro_h_pos < WIDTH - 260 - CAR_WIDTH:
-        carro_h_pos += CAR_SPEED
+    # Se passou 16 ms, move os obstáculos e o carro
+    if current_time - last_move_time >= move_interval:
+        # Controles do carro
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and carro_h_pos > 240:
+            carro_h_pos -= CAR_SPEED
+        if keys[pygame.K_RIGHT] and carro_h_pos < WIDTH - 260 - CAR_WIDTH:
+            carro_h_pos += CAR_SPEED
 
-    # Atualizar posições dos obstáculos
-    novos_obstaculos = []
-    for x, y in obstaculos:
-        if y < HEIGHT:
-            novos_obstaculos.append((x, y + OBSTACLE_SPEED))
-        else:
-            novos_obstaculos.append((FAIXAS[next_random() % 3], -OBSTACLE_HEIGHT))  # Obstáculo na posição da faixa
-    obstaculos = novos_obstaculos
+        # Atualizar posições dos obstáculos
+        novos_obstaculos = []
+        for x, y in obstaculos:
+            if y < HEIGHT:
+                novos_obstaculos.append((x, y + OBSTACLE_SPEED))
+            else:
+                novos_obstaculos.append((FAIXAS[next_random() % 3], -OBSTACLE_HEIGHT))  # Obstáculo na posição da faixa
+        obstaculos = novos_obstaculos
 
-    # Verificar colisão
-    if check_collision(carro_h_pos, obstaculos):
-        print("Colisão detectada!")
-        running = False
+        last_move_time = current_time  # Atualizar o tempo de movimento
+
+        # Verificar colisão
+        if check_collision(carro_h_pos, obstaculos):
+            print("Colisão detectada! Reiniciando o jogo.")
+            carro_h_pos, obstaculos = reset_game_state()  # Resetando o jogo
 
     # Desenhar o quadro
     draw_frame(carro_h_pos, obstaculos)
     pygame.display.flip()
-    clock.tick(60)
+
+    # Limitar a 60 FPS para controle visual
+    clock.tick(FPS)
 
 pygame.quit()
 sys.exit()
