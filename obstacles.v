@@ -14,10 +14,10 @@ module obstaculos(
     parameter ALTURA_TELA = 525;   // Altura da tela (em linhas)
     parameter LARGURA_TELA = 640;  // Largura da tela (em pixels)
     parameter OBS_LARGURA = 50;    // Largura dos obstáculos
-    parameter FRAME_CONT_LIMITE = 16'd833; // Ajustado para 30 Hz (30 fps)
+    parameter FRAME_CONT_LIMITE = 26'd50_000_000; // Ajustado para 1 Hz
 
     // Contador de quadros
-    reg [15:0] frame_cont;
+    reg [26:0] frame_cont;
 
     // Estado do gerador pseudoaleatório (LCG)
     reg [31:0] random_state; 
@@ -34,7 +34,7 @@ module obstaculos(
     always @(posedge iVGA_CLK or negedge iRST_n) begin
         if (!iRST_n) begin
             // Reset geral
-            frame_cont <= 16'd0;
+            frame_cont <= 26'd0;
             obs1_v_pos <= OBS_POS_INI;
             obs2_v_pos <= OBS_POS_INI;
             obs1_h_pos <= 10'd120;
@@ -42,7 +42,7 @@ module obstaculos(
             random_state <= 32'd12345; // Semente inicial do gerador
         end else if (reset_game) begin
             // Reset do jogo
-            frame_cont <= 16'd0;
+            frame_cont <= 26'd0;
             obs1_v_pos <= OBS_POS_INI;
             obs2_v_pos <= OBS_POS_INI;
             obs1_h_pos <= 10'd120;
@@ -54,7 +54,7 @@ module obstaculos(
 
             // Contador de quadros
             if (frame_cont == FRAME_CONT_LIMITE) begin
-                frame_cont <= 16'd0;
+                frame_cont <= 26'd0;
 
                 // Movimento do obstáculo 1
                 if (obs1_v_pos < ALTURA_TELA)
