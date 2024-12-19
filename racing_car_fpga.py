@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Jogo de Carro")
 pygame.mouse.set_visible(False)
 
-# Configuração do clock para simular o tempo de 50 MHz
+# Temporização
 FPS = 60  # Vamos usar 60 FPS no Pygame para emular 50MHz de clock
 clock = pygame.time.Clock()
 
@@ -51,7 +51,7 @@ def draw_frame(carro_h_pos, obstaculos):
         pygame.draw.rect(screen, (255, 255, 255), (240 + 2 * part_width, y, 12, 24))
 
     # Desenhar o carro
-    carro_v_pos = HEIGHT - 200 - int(1.5 * CAR_HEIGHT)  # Subir proporcionalmente
+    carro_v_pos = HEIGHT - 200 - int(1.5 * CAR_HEIGHT)  # Altura
     pygame.draw.rect(screen, (0, 0, 0), (carro_h_pos, carro_v_pos, CAR_WIDTH, CAR_HEIGHT))  # Corpo
     pygame.draw.rect(screen, (255, 255, 255), (carro_h_pos, carro_v_pos, 20, 20))  # Farol esq
     pygame.draw.rect(screen, (255, 255, 255), (carro_h_pos + CAR_WIDTH - 20, carro_v_pos, 20, 20))  # Farol dir
