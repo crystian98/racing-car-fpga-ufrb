@@ -5,7 +5,7 @@ import sys
 WIDTH, HEIGHT = 1280, 960  # resolução da tela do notebook
 CAR_WIDTH, CAR_HEIGHT = 100, 100  # dimensões do carro
 CAR_SPEED = 4  # Velocidade de movimento horizontal do carro
-OBSTACLE_WIDTH, OBSTACLE_HEIGHT = 100, 100  # Obstáculos aumentados proporcionalmente
+OBSTACLE_WIDTH, OBSTACLE_HEIGHT = 100, 100  #Dimensões dos obstáculos
 OBSTACLE_SPEED = 10  # Velocidade de movimento dos obstáculos
 PISTA_LARGURA = WIDTH - 480  # Largura da pista
 FAIXA_CENTRAL = 240 + (PISTA_LARGURA // 2 - CAR_WIDTH // 2)  # Posição inicial e central do carro
