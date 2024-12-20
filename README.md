@@ -1,5 +1,8 @@
 # Projeto de Jogo de Corrida com Controlador VGA
 
+!(jogo_fpga.jpg)
+
+
 ## Visão Geral do Projeto
 
 Este projeto implementa um **jogo de corrida** utilizando FPGA, com o objetivo de simular um jogo de corrida em um display VGA.
