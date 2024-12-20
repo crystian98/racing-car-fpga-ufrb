@@ -1,6 +1,6 @@
 
 
-![# Projeto de Jogo de Corrida com Controlador VGA](jogo_fpga.jpg)
+![Projeto de Jogo de Corrida com Controlador VGA](jogo_fpga.jpg)
 
 
 ## Visão Geral do Projeto
