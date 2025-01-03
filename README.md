@@ -1,5 +1,5 @@
 
-#Jogo de Corrida em FPGA 🏎
+# Jogo de Corrida em FPGA 🏎
 
 ![Projeto de Jogo de Corrida com Controlador VGA](jogo_fpga.jpg)
 
